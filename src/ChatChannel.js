@@ -9,7 +9,6 @@ class ChatChannel extends Component {
     super(props);
     this.state = {
       newMessage: "",
-      channelProxy: props.channelProxy,
       messages: [],
       loadingState: "initializing",
       boundChannels: new Set()
@@ -17,11 +16,11 @@ class ChatChannel extends Component {
   }
 
   loadMessagesFor = thisChannel => {
-    if (this.state.channelProxy === thisChannel) {
+    if (this.props.channelProxy === thisChannel) {
       thisChannel
         .getMessages()
         .then(messagePaginator => {
-          if (this.state.channelProxy === thisChannel) {
+          if (this.props.channelProxy === thisChannel) {
             this.setState({
               messages: messagePaginator.items,
               loadingState: "ready"
@@ -36,11 +35,11 @@ class ChatChannel extends Component {
   };
 
   componentDidMount = () => {
-    if (this.state.channelProxy) {
-      this.loadMessagesFor(this.state.channelProxy);
+    if (this.props.channelProxy) {
+      this.loadMessagesFor(this.props.channelProxy);
 
-      if (!this.state.boundChannels.has(this.state.channelProxy)) {
-        let newChannel = this.state.channelProxy;
+      if (!this.state.boundChannels.has(this.props.channelProxy)) {
+        let newChannel = this.props.channelProxy;
         newChannel.on("messageAdded", m => this.messageAdded(m, newChannel));
         this.setState({
           boundChannels: new Set([...this.state.boundChannels, newChannel])
@@ -50,11 +49,11 @@ class ChatChannel extends Component {
   };
 
   componentDidUpdate = (oldProps, oldState) => {
-    if (this.state.channelProxy !== oldState.channelProxy) {
-      this.loadMessagesFor(this.state.channelProxy);
+    if (this.props.channelProxy !== oldState.channelProxy) {
+      this.loadMessagesFor(this.props.channelProxy);
 
-      if (!this.state.boundChannels.has(this.state.channelProxy)) {
-        let newChannel = this.state.channelProxy;
+      if (!this.state.boundChannels.has(this.props.channelProxy)) {
+        let newChannel = this.props.channelProxy;
         newChannel.on("messageAdded", m => this.messageAdded(m, newChannel));
         this.setState({
           boundChannels: new Set([...this.state.boundChannels, newChannel])
@@ -79,7 +78,7 @@ class ChatChannel extends Component {
   }
 
   messageAdded = (message, targetChannel) => {
-    if (targetChannel === this.state.channelProxy)
+    if (targetChannel === this.props.channelProxy)
       this.setState((prevState, props) => ({
         messages: [...prevState.messages, message]
       }));
@@ -93,12 +92,12 @@ class ChatChannel extends Component {
     event.preventDefault();
     const message = this.state.newMessage;
     this.setState({ newMessage: "" });
-    this.state.channelProxy.sendMessage(message);
+    this.props.channelProxy.sendMessage(message);
   };
 
   onDrop = acceptedFiles => {
     console.log(acceptedFiles);
-    this.state.channelProxy.sendMessage({
+    this.props.channelProxy.sendMessage({
       contentType: acceptedFiles[0].type,
       media: acceptedFiles[0]
     });
