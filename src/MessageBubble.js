@@ -1,42 +1,41 @@
-import React, { Component } from "react";
-import styles from "./MessageBubble.module.css";
+import React, {Component} from 'react';
+import styles from './MessageBubble.module.css';
 
 class MessageBubble extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      hasMedia: this.props.message.type === "media",
       mediaDownloadFailed: false,
-      mediaUrl: null
+      mediaUrl: null,
     };
   }
 
   componentDidMount = () => {
-    if (this.state.hasMedia) {
+    if (this.props.message.type === 'media') {
       this.props.message.media
         .getContentUrl()
         .then(url => {
-          this.setState({ mediaUrl: url });
+          this.setState({mediaUrl: url});
         })
-        .catch(e => this.setState({ mediaDownloadFailed: true }));
+        .catch(e => this.setState({mediaDownloadFailed: true}));
     }
   };
 
   render = () => {
-    const { itemStyle, divStyle } =
-      this.props.direction === "incoming"
+    const {itemStyle, divStyle} =
+      this.props.direction === 'incoming'
         ? {
             itemStyle: styles.received_msg,
-            divStyle: styles.received_withd_msg
+            divStyle: styles.received_withd_msg,
           }
-        : { itemStyle: styles.outgoing_msg, divStyle: styles.sent_msg };
+        : {itemStyle: styles.outgoing_msg, divStyle: styles.sent_msg};
 
     const m = this.props.message;
-    if (this.state.hasMedia) {
-      console.log("Message is media message");
+    if (m.type === 'media') {
+      console.log('Message is media message');
       // log media properties
-      console.log("Media properties", m.media);
+      console.log('Media properties', m.media);
     }
 
     return (
@@ -45,7 +44,7 @@ class MessageBubble extends Component {
           <div>
             <strong>{m.author}</strong>
             <br />
-            {this.state.hasMedia ? (
+            {m.type === 'media' ? (
               <Media
                 hasFailed={this.state.mediaDownloadFailed}
                 url={this.state.mediaUrl}
