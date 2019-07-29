@@ -65,6 +65,7 @@ class MessageBubble extends Component {
 function Media(props) {
   if (props.hasFailed) return <p>(Failed to download media!)</p>;
   else if (props.url === null) return <p>Downloading…</p>;
+  // eslint-disable-next-line
   else return <img className={styles.image} src={props.url} />;
 }
 
