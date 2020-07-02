@@ -14,7 +14,7 @@
     "twilio-chat": "3.3.4"
   },
   "devDependencies": {
-    "typescript": "3.8.3"
+    "typescript": "3.9.6"
   },
   "scripts": {
     "start": "react-scripts start",
